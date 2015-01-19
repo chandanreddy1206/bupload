@@ -35,6 +35,8 @@ import com.google.appengine.tools.cloudstorage.GcsService;
 import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
 import com.google.appengine.tools.cloudstorage.RetryParams;
 
+import datastore.TableStandardizationUtil;
+
 @SuppressWarnings("serial")
 public class GcssppengineServlet extends HttpServlet {
 
@@ -120,7 +122,8 @@ public class GcssppengineServlet extends HttpServlet {
 		List<DemandSetUp> secondPlantSet = new ArrayList<DemandSetUp>();
 		List<DemandSetUp> thirdPlantSet = new ArrayList<DemandSetUp>();
 		
-		
+		TableStandardizationUtil tUtil = new TableStandardizationUtil();
+		String bucketFolderName = tUtil.getBulkUploadURL();
 		
 		Map<String, String> finalDemandRequiredDates;
 
@@ -413,7 +416,7 @@ public class GcssppengineServlet extends HttpServlet {
 		byte[] channel= (headers+ strbuilder.toString()).getBytes();
 		
 		ByteBuffer buf = ByteBuffer.wrap(channel);
-		GcsFilename file= new GcsFilename("e2escm-gpractice.appspot.com", "ScmProject/bulkdatafile"+((Integer)i).toString()+".csv");
+		GcsFilename file= new GcsFilename("e2escm-gpractice.appspot.com", bucketFolderName+"/bulkdatafile"+((Integer)i).toString()+".csv");
 		
 		GcsFileOptions.Builder builder= new GcsFileOptions.Builder();
 		GcsFileOptions fileoptions=builder.mimeType("application/vnd.ms-excel").build();
