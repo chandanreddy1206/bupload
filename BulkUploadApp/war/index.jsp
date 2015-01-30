@@ -1,31 +1,20 @@
-<!DOCTYPE html>
+<%@page import="java.io.PrintWriter"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+    pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta charset="UTF-8">
-
-<script>
-function getUrlVars() {
-    var vars = {},  //you need object aka hash not an array
-        hash;
-    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
-    for(var i = 0; i < hashes.length; i++) {
-        hash = hashes[i].split('=');
-        //you need to decode uri components
-        vars[decodeURIComponent(hash[0])] = decodeURIComponent(hash[1]);
-    }
-    return vars;
-
-}
-
-</script>
-
-
-<title>Supply Chain Management - Bulk Uploads</title>
-<meta name="description" content="A description of your website">
-<meta name="keywords" content="keyword1, keyword2, keyword3">
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <link href="css/style.css" rel="stylesheet" type="text/css">
+<title>Insert title here</title>
 </head>
 <body>
+
+
+<%
+PrintWriter outht= response.getWriter();
+//outht.print("Good Got the first view");
+%>
 
 <div id="wrapper"> 
   
@@ -87,12 +76,11 @@ function getUrlVars() {
        <!--   <h1>Upload</h1> -->
         <div class="box">
 
-	 <ul>
- 	     <li><a href="index.html">Demand</a></li>
-           <li><a href="supply.html">Supply</a></li> 
-           <li><a href="productfamily.html">Product Family</a></li> 
-            
-          </ul>
+	<!--  <ul>
+ 	    <li><a href="index.jsp">Demand</a></li>
+         <li><a href="supply.html">Supply</a></li> 
+           <li><a href="product_family.html">Product Family</a></li>             
+          </ul> -->
          
         </div>
       </div>
@@ -117,6 +105,8 @@ function getUrlVars() {
   </div>
 
 </div>
+
+
 
 </body>
 </html>

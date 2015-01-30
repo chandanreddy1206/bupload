@@ -7,7 +7,15 @@ public class PlantsDataVo {
 	String orgCode;
 	
 	String comCode;
-	
+	String type;
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
 	int indexNumber;
 
 	public String getPlantCode() {

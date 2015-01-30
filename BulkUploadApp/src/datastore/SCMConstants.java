@@ -29,7 +29,17 @@ public interface SCMConstants {
 
 	/** Google Drive config constants for file path */
 	public static final String SERVICE_ACCOUNT_PKCS12_FILE_PATH = "e2escm-gpractice-8c4b9745f862.p12";
-
+    public static final String PRODUCT_UPLOAD_COUNT = "Prodcut_Upload_Count";
+	
+	public static final String PRODUCT_UPLOAD_COUNT_DATA = "Prodcut_Upload_Count_Data";
+	
+	public static final String DEMAND_UPLOAD_COUNT = "Demand_Upload_Count";
+	
+	public static final String DEMAND_UPLOAD_COUNT_DATA = "Demand_Upload_Count_Data";
+	
+	public static final String SUPPLY_UPLOAD_COUNT = "Supply_Upload_Count";
+	
+	public static final String SUPPLY_UPLOAD_COUNT_DATA = "Supply_Upload_Count_Data";
 	/** Application name */
 	public static final String APP_NAME = "e2escm-gpractice";
 
@@ -108,6 +118,16 @@ public interface SCMConstants {
 	
 	public static final String DEMAND_REQUIREDDATES_DATA = "Demand_RequiredDates_Data";
 	
+	
+public static final String SUPPLY_REQUIREDDATES_MAP = "Supply_RequiredDates_Map";
+	
+	public static final String SUPPLY_REQUIREDDATES_DATA = "Supply_RequiredDates_Data";
+	
+	
+public static final String PRODUCT_REQUIREDDATES_MAP = "Product_RequiredDates_Map";
+	
+	public static final String PRODUCT_REQUIREDDATES_DATA = "Product_RequiredDates_Data";
+	
 	public static final String DSENTITY_ARUBA_FAMILY_DATA = "Aruba_Family_Data";
 	
 	public static final String DSENTITY_ARUBA_FAMILY_MAP = "Aruba_Family_Map";
@@ -127,7 +147,8 @@ public interface SCMConstants {
 	
 	public static final String DEMAND_REQUIREDDATES = "DemandRequiredDates";
 	
-	
+	public static final String SUPPLY_REQUIREDDATES = "SupplyRequiredDates";
+	public static final String PRODUCT_REQUIREDDATES = "ProductRequiredDates";
 	public static final String PHYSICAL_DETAILS = "Physical Details";
 
 	/** The Constant MODE. */

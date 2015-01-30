@@ -10,17 +10,7 @@ public class TableStandardizationUtil {
 
 	/** The Project instance name. */
 	//private String projectInstanceName = "E2EProductTest";
-	  private String projectInstanceName = "ARUBA_MASTER_UATDATASET";
-	  
-	  
-		/*   Set bulkUploadURL according to the dataset as below : 
-      ARUBA_MASTER_UATDATASET = http://arubauatbulkuploads-dot-e2escm-gpractice.appspot.com/ -> arubauat  
-      ARUBA_MASTER_VENKAT = http://arubatestbulkuploads-dot-e2escm-gpractice.appspot.com/ -> arubatest
-      ARUBA_MASTER_ITEST = bulkuploads             -> <anydev>
-*/
-	  
-	  private String bulkUploadURL = "arubauatbulkuploads";
-	
+	  private String projectInstanceName = "ARUBA_MASTER_ITEST";
 	
 	private static String plantDataInstanceName = null;
 	private String activePlantCode = null;
@@ -791,13 +781,5 @@ public class TableStandardizationUtil {
 
 	public void setActivePlantCode(String activePlantCode) {
 		this.activePlantCode = activePlantCode;
-	}
-	
-	public String getBulkUploadURL() {
-		return bulkUploadURL;
-	}
-
-	public void setBulkUploadURL(String bulkUploadURL) {
-		this.bulkUploadURL = bulkUploadURL;
 	}
 }

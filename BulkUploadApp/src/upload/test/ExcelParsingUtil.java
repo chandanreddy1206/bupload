@@ -43,6 +43,7 @@ public class ExcelParsingUtil {
 
 		final List<List<Object>> tableList = new ArrayList<List<Object>>();
 		try {
+			System.out.println("********1**********");
 			final Workbook wb = WorkbookFactory.create(fileContent);
 			final Sheet mySheet = wb.getSheetAt(0);
 			List<Object> rowList;
@@ -55,6 +56,7 @@ public class ExcelParsingUtil {
 			Row r = null;
 			int i = 0;
 			int lastColumn = 0;
+			System.out.println("********2**********");
 		/*	//if (rowStart != 0) {
 				throw new IllegalFormatException();
 			}*/
@@ -126,10 +128,13 @@ public class ExcelParsingUtil {
 					}
 				}
 			}
+			System.out.println("********3**********");
 		} catch (InvalidFormatException e1) {
+			System.out.println("out of memory in catch block 1");
 			e1.printStackTrace();
 			return null;
 		} catch (IOException e1) {
+			System.out.println("out of memory in catch block2");
 			e1.printStackTrace();
 			return null;
 		}
