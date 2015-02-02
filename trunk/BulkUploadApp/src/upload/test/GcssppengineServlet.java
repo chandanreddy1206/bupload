@@ -67,7 +67,7 @@ public class GcssppengineServlet extends HttpServlet {
             
                   InputStream inputStream = fileItemStream.openStream();
                   InputStream stream = new ByteArrayInputStream(IOUtils.toByteArray(inputStream));
-                  List<List<Object>> table = ExcelParsingUtil.readExcellData(stream,("Demand".equals(req.getParameter("type")))?29:("Supply".equals(req.getParameter("type")))?39:27);
+                  List<List<Object>> table = ExcelParsingUtil.readExcellData(stream,("Demand".equals(req.getParameter("type")))?29:("Supply".equalsIgnoreCase(req.getParameter("type")))?39:27);
                    if (table == null) {
 						isUploadSuccessful = false;
 					} else {
@@ -83,31 +83,44 @@ public class GcssppengineServlet extends HttpServlet {
                                   rowLists.add(row);
                                   PlantID.put(key, rowLists);                                 
                             }
+                            try{                            	
 							for (Map.Entry<String, List<List<Object>>> tableData : PlantID.entrySet()) {								
 								 if (tableData.getKey().equals("Organisation Code_Company Code_Plant Code")) {
 									 System.out.println("Header Data");
 								 }else {
 								      plantDataSetInstance = "E2ESCM_" + tableData.getKey();	
-								      if("Demand".equals(req.getParameter("type"))){								    	 
-						                  jobids=  demand.createDemandData(tableData.getValue(),plantDataSetInstance,insertionCount);                  
-						              }else if("Supply".equals(req.getParameter("type"))){						                                
-						                  jobids=  supply.createSupplyData(tableData.getValue());   
-						              }else if("BOM".equals(req.getParameter("type"))){ 
-						                  jobids=  bom.createProductData(tableData.getValue());   
+								      if("Demand".equalsIgnoreCase(req.getParameter("type"))){								    	 
+						                  jobids=  demand.createDemandData(tableData.getValue(),plantDataSetInstance);                  
+						              }else if("Supply".equalsIgnoreCase(req.getParameter("type"))){						                                
+						                  jobids=  supply.createSupplyData(tableData.getValue(),plantDataSetInstance);   
+						              }else if("BOM".equalsIgnoreCase(req.getParameter("type"))){ 
+						                  jobids=  bom.createProductData(tableData.getValue(),plantDataSetInstance);    
 						          }
 							    }
 						     }
+                             }
+                             catch(Exception e){
+                            	 System.out.println("exception-->"+e.getMessage());
+                            	 e.printStackTrace();
+                             }
 							for (Map.Entry<String, List<List<Object>>> tableData : PlantID.entrySet()) {								
 								 if (tableData.getKey().equals("Organisation Code_Company Code_Plant Code")) {
 									 System.out.println("Header Data");
 								 }else {									 
-									 plantDataSetInstance = "E2ESCM_" + tableData.getKey();
-									 insertionCount = datastore.ProductInfoUtil.getDemandUploadCountFromDataStore(plantDataSetInstance);
-									 datastore.ProductInfoUtil.putDemandUploadCountIntoDataStore(insertionCount,plantDataSetInstance);
-									 
-							    }
+									 plantDataSetInstance = "E2ESCM_" + tableData.getKey();									 
+									  if("Demand".equalsIgnoreCase(req.getParameter("type"))){		
+										  insertionCount = datastore.ProductInfoUtil.getDemandUploadCountFromDataStore(plantDataSetInstance);
+										  datastore.ProductInfoUtil.putDemandUploadCountIntoDataStore(insertionCount,plantDataSetInstance);                  
+						              }else if("Supply".equalsIgnoreCase(req.getParameter("type"))){
+						            	  insertionCount = datastore.ProductInfoUtil.getSupplyUploadCountFromDataStore(plantDataSetInstance);
+						            	  datastore.ProductInfoUtil.putSupplyUploadCountIntoDataStore(insertionCount,plantDataSetInstance);   
+						              }else if("BOM".equalsIgnoreCase(req.getParameter("type"))){
+						            	  insertionCount = datastore.ProductInfoUtil.getProductUploadCountFromDataStore(plantDataSetInstance);
+						            	  datastore.ProductInfoUtil.putProductUploadCountIntoDataStore(insertionCount,plantDataSetInstance);    
+						              }	
+							      }
 						     }							
-					}                 
+					    }                 
             } 
         }   
         catch( Exception e){    
