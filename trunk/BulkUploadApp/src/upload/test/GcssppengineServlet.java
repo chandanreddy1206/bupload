@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -36,10 +37,15 @@ import com.google.appengine.tools.cloudstorage.GcsService;
 import com.google.appengine.tools.cloudstorage.GcsServiceFactory;
 import com.google.appengine.tools.cloudstorage.RetryParams;
 
+import datastore.TableStandardizationUtil;
+
 @SuppressWarnings("serial")
 public class GcssppengineServlet extends HttpServlet {
 	
 	private static Map<String, String> demandRequiredDates;
+	private static String plantDataSetInstance = null;
+	private static int insertionCount;
+	static TableStandardizationUtil tUtil = new TableStandardizationUtil();
 	private final GcsService gcsService = GcsServiceFactory.createGcsService(RetryParams.getDefaultInstance());
 	public void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException 	{
@@ -50,6 +56,8 @@ public class GcssppengineServlet extends HttpServlet {
         UploadDemand demand=new UploadDemand();
         UploadSupply supply=new UploadSupply();
         UploadFamily bom=new UploadFamily();
+        boolean isUploadSuccessful = true;
+        
         try 
         {
             FileItemIterator fileItemIterator = servletFileUpload.getItemIterator(req);
@@ -58,17 +66,48 @@ public class GcssppengineServlet extends HttpServlet {
                   FileItemStream fileItemStream = (FileItemStream) fileItemIterator.next();
             
                   InputStream inputStream = fileItemStream.openStream();
-                  InputStream stream = new ByteArrayInputStream(IOUtils.toByteArray(inputStream));                
-                  if("Demand".equals(req.getParameter("type"))){
-                  List<List<Object>> table = ExcelParsingUtil.readExcellData(stream, 29);               
-                  jobids=  demand.createDemandData(table);                  
-                  }else if("Supply".equals(req.getParameter("type"))){
-                  List<List<Object>> table = ExcelParsingUtil.readExcellData(stream, 39);               
-                  jobids=  supply.createSupplyData(table);   
-                  }else if("BOM".equals(req.getParameter("type"))){                
-                  List<List<Object>> table = ExcelParsingUtil.readExcellData(stream, 27);               
-                  jobids=  bom.createProductData(table);   
-                  }
+                  InputStream stream = new ByteArrayInputStream(IOUtils.toByteArray(inputStream));
+                  List<List<Object>> table = ExcelParsingUtil.readExcellData(stream,("Demand".equals(req.getParameter("type")))?29:("Supply".equals(req.getParameter("type")))?39:27);
+                   if (table == null) {
+						isUploadSuccessful = false;
+					} else {
+						     List<Product> list;
+							 Map<String,List<List<Object>>> PlantID=new HashMap<String,List<List<Object>>>();
+                             for(List<Object> rowData:table){
+                                  String key= (String) rowData.get(0)+"_"+rowData.get(2)+"_"+rowData.get(4);
+                                  List<Object> row=rowData;
+                                  List<List<Object>> rowLists=new ArrayList<List<Object>>();
+                                  if(PlantID.get(key)!=null){
+                                       rowLists=PlantID.get(key);
+                                  }
+                                  rowLists.add(row);
+                                  PlantID.put(key, rowLists);                                 
+                            }
+							for (Map.Entry<String, List<List<Object>>> tableData : PlantID.entrySet()) {								
+								 if (tableData.getKey().equals("Organisation Code_Company Code_Plant Code")) {
+									 System.out.println("Header Data");
+								 }else {
+								      plantDataSetInstance = "E2ESCM_" + tableData.getKey();	
+								      if("Demand".equals(req.getParameter("type"))){								    	 
+						                  jobids=  demand.createDemandData(tableData.getValue(),plantDataSetInstance,insertionCount);                  
+						              }else if("Supply".equals(req.getParameter("type"))){						                                
+						                  jobids=  supply.createSupplyData(tableData.getValue());   
+						              }else if("BOM".equals(req.getParameter("type"))){ 
+						                  jobids=  bom.createProductData(tableData.getValue());   
+						          }
+							    }
+						     }
+							for (Map.Entry<String, List<List<Object>>> tableData : PlantID.entrySet()) {								
+								 if (tableData.getKey().equals("Organisation Code_Company Code_Plant Code")) {
+									 System.out.println("Header Data");
+								 }else {									 
+									 plantDataSetInstance = "E2ESCM_" + tableData.getKey();
+									 insertionCount = datastore.ProductInfoUtil.getDemandUploadCountFromDataStore(plantDataSetInstance);
+									 datastore.ProductInfoUtil.putDemandUploadCountIntoDataStore(insertionCount,plantDataSetInstance);
+									 
+							    }
+						     }							
+					}                 
             } 
         }   
         catch( Exception e){    
