@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 
+
 import datastore.TableStandardizationUtil;
 
 import com.google.api.client.extensions.appengine.http.UrlFetchTransport;
@@ -73,7 +74,7 @@ public class ProductInfoUtil {
 			throws IOException {
 		productRequiredDates = new HashMap<String, String>();
 		
-		System.out.println("productRequiredDates :::::::::::"+tUtil.getProjectInstanceName());
+		//System.out.println("productRequiredDates :::::::::::"+tUtil.getProjectInstanceName());
 		NamespaceManager.set(tUtil.getProjectInstanceName());
 		productRequiredDates = getProductRequiredDatesFromDataStore();
 		final Set<String> keys = productReqDates.keySet();
@@ -88,7 +89,7 @@ public class ProductInfoUtil {
 		
 		productRequiredDates.setProperty(SCMConstants.PRODUCT_REQUIREDDATES_DATA, new Blob(
 				ConversionUtil.convertObjectToByte(supplyRequiredDates)));
-		System.out.println("productRequiredDates @@@@@ "+productRequiredDates.getProperties());
+		//System.out.println("productRequiredDates @@@@@ "+productRequiredDates.getProperties());
 		
 		datastore.put(productRequiredDates);
 
@@ -96,20 +97,20 @@ public class ProductInfoUtil {
 	
 	public static Map<String, String> getProductRequiredDatesFromDataStore(/*String plantDataSetInstance*/) {
 		String plantDataSetInstance = tUtil.getProjectInstanceName();
-		System.out.println("productRequiredDatesFromDataStore:::"+plantDataSetInstance);
+		//System.out.println("productRequiredDatesFromDataStore:::"+plantDataSetInstance);
 		
 		NamespaceManager.set(plantDataSetInstance);
 		Entity productReqDates = new Entity(SCMConstants.PRODUCT_REQUIREDDATES,
 				plantDataSetInstance+ SCMConstants.PRODUCT_REQUIREDDATES_MAP);
-		System.out.println("productReqDates*Entity***********:"+productReqDates);	
+		//System.out.println("productReqDates*Entity***********:"+productReqDates);	
 		try {
 			productReqDates = datastore.get(productReqDates.getKey());
-			System.out.println("productReqDates*key***********:"+productReqDates);	
+		//	System.out.println("productReqDates*key***********:"+productReqDates);	
 		} catch (EntityNotFoundException e) {
 			productReqDates = null;
 		}
 		if (productReqDates != null) {
-			System.out.println("productReqDates*if**********:"+productReqDates);	
+			//System.out.println("productReqDates*if**********:"+productReqDates);	
 			final Blob blob = (Blob) productReqDates
 					.getProperty(SCMConstants.PRODUCT_REQUIREDDATES_DATA);
 			try {
@@ -125,7 +126,7 @@ public class ProductInfoUtil {
 						+ e.getMessage());
 			}
 		}
-		System.out.println("*****  productRequiredDates ************:"+productRequiredDates);
+		//System.out.println("*****  productRequiredDates ************:"+productRequiredDates);
 		return productRequiredDates;
 	}
 	
@@ -133,7 +134,7 @@ public class ProductInfoUtil {
 			throws IOException {
 		deamndRequiredDates = new HashMap<String, String>();
 		
-		System.out.println("putAllRequiredDatesIntoDataStore :::::::::::"+tUtil.getProjectInstanceName());
+		//System.out.println("putAllRequiredDatesIntoDataStore :::::::::::"+tUtil.getProjectInstanceName());
 		NamespaceManager.set(tUtil.getProjectInstanceName());
 		deamndRequiredDates = getDemandRequiredDatesFromDataStore();
 		final Set<String> keys = demandReqDates.keySet();
@@ -147,7 +148,7 @@ public class ProductInfoUtil {
 				tUtil.getProjectInstanceName() + SCMConstants.DEMAND_REQUIREDDATES_MAP);
 		demadRequiredDates.setProperty(SCMConstants.DEMAND_REQUIREDDATES_DATA, new Blob(
 				ConversionUtil.convertObjectToByte(deamndRequiredDates)));
-		System.out.println("demadRequiredDates @@@@@ "+demadRequiredDates.getProperties());
+		//System.out.println("demadRequiredDates @@@@@ "+demadRequiredDates.getProperties());
 		
 		datastore.put(demadRequiredDates);
 
@@ -155,20 +156,20 @@ public class ProductInfoUtil {
 	
 	public static Map<String, String> getDemandRequiredDatesFromDataStore(/*String plantDataSetInstance*/) {
 		String plantDataSetInstance = tUtil.getProjectInstanceName();
-		System.out.println("DemandRequiredDatesFromDataStore:::"+plantDataSetInstance);
+		//System.out.println("DemandRequiredDatesFromDataStore:::"+plantDataSetInstance);
 		
 		NamespaceManager.set(plantDataSetInstance);
 		Entity demanddReqDates = new Entity(SCMConstants.DEMAND_REQUIREDDATES,
 				plantDataSetInstance+ SCMConstants.DEMAND_REQUIREDDATES_MAP);
-		System.out.println("demanddReqDates*Entity**********:"+demanddReqDates);	
+		//System.out.println("demanddReqDates*Entity**********:"+demanddReqDates);	
 		try {
 			demanddReqDates = datastore.get(demanddReqDates.getKey());
-			System.out.println("demanddReqDates**key***********:"+demanddReqDates);	
+			//System.out.println("demanddReqDates**key***********:"+demanddReqDates);	
 		} catch (EntityNotFoundException e) {
 			demanddReqDates = null;
 		}
 		if (demanddReqDates != null) {
-			System.out.println("demanddReqDates**if**********:"+demanddReqDates);	
+			//System.out.println("demanddReqDates**if**********:"+demanddReqDates);	
 			final Blob blob = (Blob) demanddReqDates
 					.getProperty(SCMConstants.DEMAND_REQUIREDDATES_DATA);
 			try {
@@ -184,7 +185,7 @@ public class ProductInfoUtil {
 						+ e.getMessage());
 			}
 		}
-		System.out.println("*****  deamndRequiredDates ************:"+deamndRequiredDates);
+		//System.out.println("*****  deamndRequiredDates ************:"+deamndRequiredDates);
 		return deamndRequiredDates;
 	}
 
@@ -193,7 +194,7 @@ public class ProductInfoUtil {
 			throws IOException {
 		supplyRequiredDates = new HashMap<String, String>();
 		
-		System.out.println("putAllRequiredDatesIntoDataStore :::::::::::"+tUtil.getProjectInstanceName());
+		//System.out.println("putAllRequiredDatesIntoDataStore :::::::::::"+tUtil.getProjectInstanceName());
 		NamespaceManager.set(tUtil.getProjectInstanceName());
 		supplyRequiredDates = getSupplyRequiredDatesFromDataStore();
 		final Set<String> keys = supplyReqDates.keySet();
@@ -208,7 +209,7 @@ public class ProductInfoUtil {
 		
 		supplyRequiredDates.setProperty(SCMConstants.SUPPLY_REQUIREDDATES_DATA, new Blob(
 				ConversionUtil.convertObjectToByte(supplyRequiredDates)));
-		System.out.println("supplyDates @@@@@ "+supplyRequiredDates.getProperties());
+		//System.out.println("supplyDates @@@@@ "+supplyRequiredDates.getProperties());
 		
 		datastore.put(supplyRequiredDates);
 
@@ -216,20 +217,20 @@ public class ProductInfoUtil {
 	
 	public static Map<String, String> getSupplyRequiredDatesFromDataStore(/*String plantDataSetInstance*/) {
 		String plantDataSetInstance = tUtil.getProjectInstanceName();
-		System.out.println("supplyRequiredDatesFromDataStore:::"+plantDataSetInstance);
+		//System.out.println("supplyRequiredDatesFromDataStore:::"+plantDataSetInstance);
 		
 		NamespaceManager.set(plantDataSetInstance);
 		Entity supplyReqDates = new Entity(SCMConstants.SUPPLY_REQUIREDDATES,
 				plantDataSetInstance+ SCMConstants.SUPPLY_REQUIREDDATES_MAP);
-		System.out.println("supplyReqDates*Entity***********:"+supplyReqDates);	
+		//System.out.println("supplyReqDates*Entity***********:"+supplyReqDates);	
 		try {
 			supplyReqDates = datastore.get(supplyReqDates.getKey());
-			System.out.println("supplyReqDates*key***********:"+supplyReqDates);	
+			//System.out.println("supplyReqDates*key***********:"+supplyReqDates);	
 		} catch (EntityNotFoundException e) {
 			supplyReqDates = null;
 		}
 		if (supplyReqDates != null) {
-			System.out.println("supplyReqDates*if**********:"+supplyReqDates);	
+			//System.out.println("supplyReqDates*if**********:"+supplyReqDates);	
 			final Blob blob = (Blob) supplyReqDates
 					.getProperty(SCMConstants.SUPPLY_REQUIREDDATES_DATA);
 			try {
@@ -282,7 +283,7 @@ public class ProductInfoUtil {
 		} else {
 			productUploadCountValue = 0;
 		}
-		System.out.println("ProductUploadCountValue :::"+ productUploadCountValue);
+		//System.out.println("ProductUploadCountValue :::"+ productUploadCountValue);
 		return productUploadCountValue;
 	}
 	public static void putDemandUploadCountIntoDataStore(int insertionCount,
@@ -293,7 +294,7 @@ public class ProductInfoUtil {
 				SCMConstants.DEMAND_UPLOAD_COUNT, SCMConstants.DEMAND_UPLOAD_COUNT_DATA);
 		//int val = getDemandUploadCountFromDataStore(plantDataSetInstance);
 		demandUploadCount.setProperty(COUNT, insertionCount + 1);
-		//System.out.println("demandUploadCount---->"+demandUploadCount);
+		//System.out.println("demandUploadCount---->"+demandUploadCount);		
 		datastore.put(demandUploadCount);
 	}
 	
@@ -356,7 +357,7 @@ public class ProductInfoUtil {
 		} else {
 			supplyUploadCountValue = 0;
 		}
-		System.out.println("supplyUploadCountValue :::"+ supplyUploadCountValue);
+		//System.out.println("supplyUploadCountValue :::"+ supplyUploadCountValue);
 		return supplyUploadCountValue;
 	}
 	
