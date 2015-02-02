@@ -280,7 +280,7 @@ public class UploadDemand extends HttpServlet {
 		if(strbuilder.toString()!=null && !strbuilder.toString().isEmpty()){		
 		byte[] channel= (headers+ strbuilder.toString()).getBytes();		
 		ByteBuffer buf = ByteBuffer.wrap(channel);
-		GcsFilename file= new GcsFilename("e2escm-gpractice.appspot.com", "Bulk/demand"+(String)plantDataSetInstance.toString()+".csv");
+		GcsFilename file= new GcsFilename("e2escm-gpractice.appspot.com", "Bulk/Demand_"+(String)plantDataSetInstance.toString()+".csv");
 		GcsFileOptions.Builder builder= new GcsFileOptions.Builder();
 		GcsFileOptions fileoptions=builder.mimeType("application/vnd.ms-excel").build();
 		GcsOutputChannel outputChannel;
@@ -308,7 +308,7 @@ public class UploadDemand extends HttpServlet {
 	List<Map<String,List<String>>> jobids= new ArrayList<>();
 	 try{
 		Map<String,List<String>> temp= new HashMap<>();
-		temp=new bqloadjob().bqservice("demand"+((String)plantDataSetInstance).toString()+".csv",plantDataSetInstance);
+		temp=new bqloadjob().bqservice("Demand_"+((String)plantDataSetInstance).toString()+".csv",plantDataSetInstance);
 		jobids.add(temp);
 		 try {		
 			datastore.ProductInfoUtil.putAllRequiredDatesIntoDataStore(demandRequiredDates);
