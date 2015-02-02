@@ -39,7 +39,7 @@
             		if(flag==0)
             		{ //alert("inside");
             			$.ajax({
-            				  url:'https://arubadaya-dot-e2escm-gpractice.appspot.com/_ah/api/statusapi/v1/status/'+$('#interestParamCount'+i).val()+'/'+i,
+            				  url:'https://arubatestbulkuploads-dot-e2escm-gpractice.appspot.com/_ah/api/statusapi/v1/status/'+$('#interestParamCount'+i).val()+'/'+i,
             		 		 type: 'POST',
             		 		 dataType: 'json',
             		 		 
@@ -88,11 +88,11 @@
 <link href="css/style.css" rel="stylesheet" type="text/css">
 </head>
 <body>
-<div id="wrapper"> 
+ <div id="wrapper"> 
 
   <div id="header">
    
-  </div>
+  </div> 
 
   <div id="page_content">
   
@@ -115,7 +115,7 @@
 List<String> jobs_toquery= new ArrayList();
 Integer no_of_jobs=0;
 no_of_jobs=Integer.parseInt(request.getAttribute("number").toString());
-response.getWriter().print(request.getAttribute("number"));
+/* response.getWriter().print(request.getAttribute("number")); */
 %>
 
 
@@ -127,27 +127,16 @@ and the corresponding jobs are
 for(Integer i=0;i<no_of_jobs;i++)
 {
 	jobs_toquery.add(request.getAttribute("Job"+i).toString());
-	response.getWriter().print(request.getAttribute("Job"+i));
+	/* response.getWriter().print(request.getAttribute("Job"+i)); */
 	
 }
 
 %>
 </p>
-         <br>
-         
-         
-         
+<br>
 <p>
 Now its the time to get the status
-
 </p>
-
-
-
-
-
-
-
 <input type='hidden' value=<%= jobs_toquery.size()%> id="numberofjobs"/>
 
 
@@ -156,14 +145,11 @@ Now its the time to get the status
 for(int i=0; i<jobs_toquery.size();i++)
 {	String jobid= jobs_toquery.get(i);
 %>
-<input type="text" name="fname<%= i%>" value="none" id="jobstatus<%= i%>">
-<input type="text" name="lname<%= i%>" value="none" id="joberror<%= i%>"><br>
+<input type="text" name="fname<%= i%>" value="none" id="jobstatus<%= i%>" readonly >
+<input type="text" name="lname<%= i%>" value="none" id="joberror<%= i%>" readonly ><br>
 <% 
 }
 %> 
- 
- 
-    
 <% 
 for(int i=0; i<jobs_toquery.size();i++)
 {	String jobid= jobs_toquery.get(i);
