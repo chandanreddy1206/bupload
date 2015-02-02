@@ -105,7 +105,7 @@ public class UploadDemand extends HttpServlet {
 
 	/** The is upload successful. */
 	private transient boolean isUploadSuccessful = true;
-
+	static TableStandardizationUtil tUtil = new TableStandardizationUtil();
 	/** The demand_ types. */
 	private static Set<String> demandTypes = new HashSet<String>();
 	
@@ -113,9 +113,9 @@ public class UploadDemand extends HttpServlet {
 
 	
 	/** The plant instance. */
-	private String plantDataSetInstance = null;
+	//private String plantDataSetInstance = null;
 
-	public List<Map<String, List<String>>> createDemandData(List<List<Object>> table) 
+	public List<Map<String, List<String>>> createDemandData(List<List<Object>> table,String plantDataSetInstance,int insertionCount) 
 	{
 		 final String DATEFORMAT2 = "yyyy-MM-dd HH:mm:ss";
 		String dDate = null;
@@ -124,32 +124,26 @@ public class UploadDemand extends HttpServlet {
 		final DateFormat to = new SimpleDateFormat(DATEFORMAT2);
 		Iterator<List<Object>> tblItr = table.iterator();
 		List<DemandSetUp> demandData = new ArrayList<DemandSetUp>();
-		DateFormat bqSdf = new SimpleDateFormat(DATEFORMAT2);
-		String plantDataSetInstance=null;
+		DateFormat bqSdf = new SimpleDateFormat(DATEFORMAT2);		
 		Calendar c = Calendar.getInstance();
 		 String key= "";
 		c.setTime(new Date());
 		String insertDate = bqSdf.format(c.getTime());
-		String plantCode ="";
-		tblItr = table.iterator();
-		List<Object> header = tblItr.next();	
-		int rowNo=0;
-		
-		List<DemandSetUp> firstPlantSet = new ArrayList<DemandSetUp>();
-		List<DemandSetUp> secondPlantSet = new ArrayList<DemandSetUp>();
-		List<DemandSetUp> thirdPlantSet = new ArrayList<DemandSetUp>();	
+		String plantCode ="";		
+		int rowNo=0;	
 		Map<String, String> finalDemandRequiredDates;
 		StringBuilder plantId = new StringBuilder();
-		demandRequiredDates = new HashMap<String, String>();			
+		int index=0;
+		//List<PlantsDataVo> plantsDataList = new ArrayList<PlantsDataVo>();
+		demandRequiredDates = new HashMap<String, String>();		
 		while (tblItr.hasNext())
 		{
-			List<Object> rowList = (ArrayList<Object>) tblItr.next();
+			List<Object> rowList = (ArrayList<Object>) tblItr.next();			
 			DemandSetUp demandSetUp = new DemandSetUp();				
 			if(rowList.get(4)!=null && !rowList.get(4).toString().trim().isEmpty()){
 			plantCode =  rowList.get(4).toString();								
 			demandSetUp.setPlant_Code(rowList.get(4).toString());}
-			key= (String)rowList.get(0)+"_"+rowList.get(2)+"_"+rowList.get(4);
-			//System.out.println("key--->"+key);		
+			key= (String)rowList.get(0)+"_"+rowList.get(2)+"_"+rowList.get(4);				
 			demandSetUp.setPlant_Id(key);		
 			if(rowList.get(5)!=null && !rowList.get(5).toString().trim().isEmpty()){
 			demandSetUp.setPlant_Name(rowList.get(5).toString());}
@@ -226,84 +220,25 @@ public class UploadDemand extends HttpServlet {
 			String tempPartID = rowList.get(20).toString();		
 			}			
 			demandSetUp.setInsertionDate(insertDate);
-			demandSetUp.setModifiedTime(String.valueOf(System.currentTimeMillis()));			
-			if(plantCode.equalsIgnoreCase("SUNN"))
-			{
-				firstPlantSet.add(demandSetUp);
-				
-			}else if(plantCode.equalsIgnoreCase("ARSG"))
-			{
-				secondPlantSet.add(demandSetUp);
-			}else if(plantCode.equalsIgnoreCase("AREU"))
-			{
-				thirdPlantSet.add(demandSetUp);
-			}else
-			{
-				System.out.println("SOME OTHER PLANT CODE : "+plantCode);
-			}			
-			demandData.add(demandSetUp);			
-			rowNo++;			
+			demandSetUp.setModifiedTime(String.valueOf(System.currentTimeMillis()));					
+			demandData.add(demandSetUp);		
+			rowNo++;		
 		}			
 		String headers="PlantCode,PlantName,DemandType,DemandOwner,SaleOrderNumber,SOAmendmentNumber,SalesOrderDate,StatusofSaleOrder,CustomerCode,CustomerName,CustomerShiptoAddressLine1,CustomerShiptoAddressLine2,CustomerShiptoCountryCode,CustomerShiptoCityCode,CustomerZipcode,SOLineNumber,PartNumber,PartName,PartRevisionNumber,Quantity,UOMCode,Price,CurrencyCode,RequiredDate,BusinessUnitCode,PlantID,Mode,ParentID,Date,InsertionDate,HeadParentID,OrganisationCode,CompanyCode,ModifiedTime,InsertionCount\n";
-		StringBuilder strbuilder= new StringBuilder();		
-		List<PlantsDataVo> plantsDataList = new ArrayList<PlantsDataVo>();
-	for(int i=0;i<3;i++)
-	{
+		StringBuilder strbuilder= new StringBuilder();				
+		try{
+		insertionCount = datastore.ProductInfoUtil.getDemandUploadCountFromDataStore(plantDataSetInstance);
+		for(int i=0;i<table.size();i++)
+		{
 		List<DemandSetUp> currentplant= new ArrayList<>();
-		if(i==0)
-		{				
-			
-			currentplant=firstPlantSet;			
-			DemandSetUp currentPlantDS = currentplant.get(0);
-			PlantsDataVo plantBean = new PlantsDataVo();
-			plantBean.setPlantCode(currentPlantDS.getPlant_Code());
-			plantBean.setOrgCode(currentPlantDS.getOrganisationCode());
-			plantBean.setComCode(currentPlantDS.getCompanyCode());
-			plantBean.setIndexNumber(0);
-			plantBean.setType("Demand");
-			plantDataSetInstance = "E2ESCM_"+plantBean.getOrgCode()+"_"+plantBean.getComCode()+"_"+plantBean.getPlantCode();
-			insertionCount = datastore.ProductInfoUtil.getDemandUploadCountFromDataStore(plantDataSetInstance);
-			plantsDataList.add(plantBean);
-		
-		}
-		else if(i==1)
-		{
-			currentplant=secondPlantSet;
-			DemandSetUp currentPlantDS = currentplant.get(0);
-			PlantsDataVo plantBean = new PlantsDataVo();
-			plantBean.setPlantCode(currentPlantDS.getPlant_Code());
-			plantBean.setOrgCode(currentPlantDS.getOrganisationCode());
-			plantBean.setComCode(currentPlantDS.getCompanyCode());
-			plantBean.setIndexNumber(1);
-			plantBean.setType("Demand");
-			plantDataSetInstance = "E2ESCM_"+plantBean.getOrgCode()+"_"+plantBean.getComCode()+"_"+plantBean.getPlantCode();
-			insertionCount = datastore.ProductInfoUtil.getDemandUploadCountFromDataStore(plantDataSetInstance);
-			plantsDataList.add(plantBean);
-		}
-		else
-		{
-			currentplant=thirdPlantSet;
-			DemandSetUp currentPlantDS = currentplant.get(0);	
-			PlantsDataVo plantBean = new PlantsDataVo();
-			plantBean.setPlantCode(currentPlantDS.getPlant_Code());
-			plantBean.setOrgCode(currentPlantDS.getOrganisationCode());
-			plantBean.setComCode(currentPlantDS.getCompanyCode());
-			plantBean.setIndexNumber(2);
-			plantBean.setType("Demand");
-			plantDataSetInstance = "E2ESCM_"+plantBean.getOrgCode()+"_"+plantBean.getComCode()+"_"+plantBean.getPlantCode();
-			insertionCount = datastore.ProductInfoUtil.getDemandUploadCountFromDataStore(plantDataSetInstance);
-			plantsDataList.add(plantBean);
-		}
-		
-		//System.out.println("plantDataSetInstance---->"+plantDataSetInstance);		
+		currentplant=demandData;		
 		for (Iterator iterator = currentplant.iterator(); iterator.hasNext();) 
-		{  
-			
-			DemandSetUp demandSetUp = (DemandSetUp) iterator.next();			
+		{ 			
+			DemandSetUp demandSetUp = (DemandSetUp) iterator.next();				
 			strbuilder.append(demandSetUp.getPlant_Code()+",");		
 			strbuilder.append(demandSetUp.getPlant_Name()+",");			
 			strbuilder.append(demandSetUp.getDemandType()+",");			
-			strbuilder.append("Aravinda,");    /// Demand Owner			
+			strbuilder.append("Tom Bayer"+",");		 /// Demand Owner			
 			strbuilder.append(demandSetUp.getSale_Order_Number()+",");			
 			strbuilder.append(((Integer)demandSetUp.getSo_Amendment_Number())+",");			
 			strbuilder.append(new Date().toString()+",");   // Sales order date			
@@ -339,57 +274,52 @@ public class UploadDemand extends HttpServlet {
 			strbuilder.append("HeadParent"+",");
 			strbuilder.append(demandSetUp.getOrganisationCode()+",");		
 			strbuilder.append(demandSetUp.getCompanyCode()+",");		
-			strbuilder.append(demandSetUp.getModifiedTime()+","); // insertion date			
-			
-			//System.out.println("insertionCount------->"+insertionCount);
-			strbuilder.append((insertionCount+1)+" \n");				
-					
-		}	
-		try {		
-			datastore.ProductInfoUtil.putDemandUploadCountIntoDataStore(insertionCount,plantDataSetInstance);
-		} catch (IOException e) {
-		   // TODO Auto-generated catch block
-		   e.printStackTrace();
-		}
+			strbuilder.append(demandSetUp.getModifiedTime()+","); // insertion date				
+			strbuilder.append((insertionCount+1)+" \n"); // insertion date					
+		}	 	
+		if(strbuilder.toString()!=null && !strbuilder.toString().isEmpty()){		
 		byte[] channel= (headers+ strbuilder.toString()).getBytes();		
 		ByteBuffer buf = ByteBuffer.wrap(channel);
-		GcsFilename file= new GcsFilename("e2escm-gpractice.appspot.com", "Bulk/demand"+((Integer)i).toString()+".csv");
+		GcsFilename file= new GcsFilename("e2escm-gpractice.appspot.com", "Bulk/demand"+(String)plantDataSetInstance.toString()+".csv");
 		GcsFileOptions.Builder builder= new GcsFileOptions.Builder();
 		GcsFileOptions fileoptions=builder.mimeType("application/vnd.ms-excel").build();
 		GcsOutputChannel outputChannel;
 		try {
 			outputChannel = gcsService.createOrReplace(file, fileoptions);
 			outputChannel.write(buf);
-			outputChannel.close();		
-			//System.out.println("Start the upload JOBBBBB");			
-			//System.out.println("Done");
+			outputChannel.close();			
 		} catch (Exception e1) 
 		{
-			System.out.println(e1.getMessage());
+			System.out.println("msg-->"+e1.getMessage());
 			e1.printStackTrace();
+		}
+		}else{
+			System.out.println("No data found");
 		}
 		
 	currentplant.clear();
 	strbuilder.setLength(0);	
-	}	
-	Iterator<PlantsDataVo> plantlistIt = plantsDataList.iterator();
+	   }	
+		}catch(Exception e){
+			System.out.println("Exception-------------"+e.getMessage());
+		}
+	//Iterator<PlantsDataVo> plantlistIt = plantsDataList.iterator();
 	int i = 0;	
 	List<Map<String,List<String>>> jobids= new ArrayList<>();
-	while(plantlistIt.hasNext())
-		{
-		//System.out.println("Getting in the JOB");			
+	 try{
 		Map<String,List<String>> temp= new HashMap<>();
-			temp=new bqloadjob().bqservice("demand"+((Integer)i).toString()+".csv",plantlistIt.next());
-			i++;
-			jobids.add(temp);			
-		}	
-	try {				
-		datastore.ProductInfoUtil.putAllRequiredDatesIntoDataStore(demandRequiredDates);
-		
-	} catch (IOException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}	
-	return jobids;		
+		temp=new bqloadjob().bqservice("demand"+((String)plantDataSetInstance).toString()+".csv",plantDataSetInstance);
+		jobids.add(temp);
+		 try {		
+			datastore.ProductInfoUtil.putAllRequiredDatesIntoDataStore(demandRequiredDates);
+		 } catch (IOException e) {
+			   // TODO Auto-generated catch block
+			   e.printStackTrace();
+		}
+	 }catch(Exception e ){
+			System.out.println("Exception :::::::::::"+e.getMessage());
+	 }		 
+	
+		return jobids;	
 	}	
 }
