@@ -62,7 +62,7 @@ public class bqloadjob
   String JobId;
   Job get_details;
   Bigquery bq;  
-public Map<String,List<String>> bqservice(String filename,String plantDataSetInstance) 
+public Map<String,List<String>> bqservice(String filename,String plantDataSetInstance,String type) 
 { 
 	get_details =new Job(); 	
 try {	
@@ -88,15 +88,13 @@ try {
 	   destinationTable.setProjectId("e2escm-gpractice");	   
 	   String dataSetName = plantDataSetInstance;
 	   destinationTable.setDatasetId(dataSetName);	
-	   System.out.println("getDatasetId::::::::::::::::::::::::::"+ destinationTable.getDatasetId());	
-	  // if("Demand".equals(plantsBean.getType())){		   
+	   if("Demand".equalsIgnoreCase(type)){		   
 	   destinationTable.setTableId("DEMAND");	
-	  // }else if("Supply".equals(plantsBean.getType())){
-	  // destinationTable.setTableId("SUPPLYBUY");	
-	  // }else{	
-	  // destinationTable.setTableId("BOM");   
-	 //  }	   
-	 
+	   }else if("Supply".equalsIgnoreCase(type)){
+	   destinationTable.setTableId("SUPPLYBUY");	
+	   }else if("BOM".equalsIgnoreCase(type)){
+	   destinationTable.setTableId("BOM");   
+	   }	  	
 	   loader.setDestinationTable(destinationTable);	   
 	   loader.setWriteDisposition("WRITE_APPEND");
 	   configuration.setLoad(loader);
