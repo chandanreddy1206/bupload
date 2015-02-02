@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+
+<script>
+function getUrlVars() {
+    var vars = {},  //you need object aka hash not an array
+        hash;
+    var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');
+    for(var i = 0; i < hashes.length; i++) {
+        hash = hashes[i].split('=');
+        //you need to decode uri components
+        vars[decodeURIComponent(hash[0])] = decodeURIComponent(hash[1]);
+    }
+    return vars;
+
+}
+
+</script>
+
+
+<title>Supply Chain Management - Bulk Uploads</title>
+<meta name="description" content="A description of your website">
+<meta name="keywords" content="keyword1, keyword2, keyword3">
+<link href="css/style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+
+<div id="wrapper"> 
+  
+  <div id="header">
+   
+  </div>
+
+  <div id="page_content">
+  
+  <div class="navigation">
+ <h2> Supply Chain Management - Bulk Uploads </h2>
+ 
+  </div>
+
+    <div class="left_section">
+    <div class="common_content">
+        <h2>Supply</h2>
+        <hr>
+        <p>Please use this section to upload the Supply file to bigquery dataset. Also the file will be autometically sharded across various datasets. This feature simplifies analytics</p>
+        <br>
+
+<table>
+ <form method="POST" action="gcssppengine?type=Supply"  enctype="multipart/form-data" >
+      <tr>
+        <td colspan="2" style="font-weight:bold;">
+        
+		<input  type="file" name="uploadField" />
+		
+        
+        </td>        
+      </tr>
+      <tr>
+<td>
+      <input  class="custom-btn" type="submit" value="Submit">
+</td>
+      </tr>
+ </table>
+</form>
+
+
+
+      </div>
+      
+      <div class="top_content border_none">
+        <div class="column_one">
+          <br>          
+          <p>
+	</p></div>
+        <div class="column_two border_left">
+         
+
+        </div>
+      </div>
+    </div>
+    
+    <div class="right_side_bar"> 
+      
+      <div class="col_1">
+       <!--   <h1>Upload</h1> -->
+        <div class="box">
+
+	 <ul>
+ 	     <li><a href="index.jsp">Demand</a></li>
+           <li><a href="supply.jsp">Supply</a></li> 
+           <li><a href="productfamily.jsp">Product Family</a></li> 
+            
+          </ul>
+         
+        </div>
+      </div>
+      
+      <div class="col_1">
+        
+        <div class="box">
+         </div>
+      </div>
+      
+    </div>
+    
+    <div class="clear"></div>
+
+  <!--start footer from here-->
+  <div id="footer"></a><br>
+  
+  <!--DO NOT remove footer link-->
+  <!--Template designed by--><a href="http://www.htmltemplates.net"><img src="images/footer.gif" class="copyright" alt="http://www.htmltemplates.net"></a></div>
+  
+  <!--/. end footer from here-->
+  </div>
+
+</div>
+
+</body>
+</html>
