@@ -76,11 +76,11 @@ PrintWriter outht= response.getWriter();
        <!--   <h1>Upload</h1> -->
         <div class="box">
 
-	<!--  <ul>
+	  <ul>
  	    <li><a href="index.jsp">Demand</a></li>
-         <li><a href="supply.html">Supply</a></li> 
-           <li><a href="product_family.html">Product Family</a></li>             
-          </ul> -->
+         <li><a href="supply.jsp">Supply</a></li> 
+           <li><a href="productfamily.jsp">Product Family</a></li>             
+          </ul> 
          
         </div>
       </div>
