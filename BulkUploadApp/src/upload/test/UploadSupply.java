@@ -38,6 +38,10 @@ import org.apache.poi.util.IOUtils;
 
 
 
+
+
+
+
 /*import com.app.scmProject.client.utils.DateCalculationUtil;
 import com.app.scmProject.client.utils.ProductInfoUtil;
 import com.app.scmProject.client.utils.ValidationUtil;
@@ -124,28 +128,19 @@ public class UploadSupply extends HttpServlet {
 	 * javax.servlet.http.HttpServlet#doPost(javax.servlet.http.HttpServletRequest
 	 * , javax.servlet.http.HttpServletResponse)
 	 */
-	public List<Map<String, List<String>>> createSupplyData(List<List<Object>> table) 
+	public List<Map<String, List<String>>> createSupplyData(List<List<Object>> table,String plantDataSetInstance)  
 	{
 		List<Supply> firstPlantSet = new ArrayList<Supply>();
 		List<Supply> secondPlantSet = new ArrayList<Supply>();
 		List<Supply> thirdPlantSet = new ArrayList<Supply>();
-		
-		supplyRequiredDates = new HashMap<String, String>();
-		
-	
+		supplyRequiredDates = new HashMap<String, String>();	
 		String organisationCode = null;
 		String companyCode = null;
 		String plantCode = null;
-
 		List<Supply> supplyData = new ArrayList<Supply>();
 		final Supply supply = new Supply();		
-		Iterator<List<Object>> tblItr = table.iterator();
-		tblItr = table.iterator();		
-		int rowNo = 1;
-		List<Rows> BQrowList = new ArrayList<Rows>();
-		List<TableRow> supplydata = new ArrayList<TableRow>();
-		TableDataInsertAllRequest.Rows rows = null;		
-		Map<String, String> parentChildMap = new HashMap<String, String>();
+		Iterator<List<Object>> tblItr = table.iterator();		
+		int rowNo = 1;	
 		String dDateSOD=null;		
 		final String DATEFORMAT2 = "yyyy-MM-dd HH:mm:ss";
 		String dDate = null;		
@@ -153,25 +148,18 @@ public class UploadSupply extends HttpServlet {
 		String key=null;
 		final DateFormat to = new SimpleDateFormat(DATEFORMAT2);		
 		int j=0;
+		try{
 		while (tblItr.hasNext()) {
-			List<Object> rowList = (ArrayList<Object>) tblItr.next();			
+			List<Object> rowList = (ArrayList<Object>) tblItr.next();				
 			TableRow row = new TableRow();
 			int i1 =0;			
 			int leadTime = 0;
 			Object shipDate = null;
 			String supplyType = null;
 			Supply supplySetup = new Supply();
-			String SuppTypMandatory = null;			
-                        if(j>0){	
-						//StringBuilder plantId = new StringBuilder();
-						/*plantId.append(rowList.get(0).toString())
-						.append("-")
-						.append(rowList.get(2).toString())
-						.append("-")
-						.append(rowList.get(4).toString());		*/				
+			String SuppTypMandatory = null;	                       										
                         key= (String)rowList.get(0)+"_"+rowList.get(2)+"_"+rowList.get(4);
-                		//System.out.println("key--->"+key);	
-						if(rowList.get(0)!=null && !rowList.get(0).toString().trim().isEmpty())
+                		if(rowList.get(0)!=null && !rowList.get(0).toString().trim().isEmpty())
 						supplySetup.setOrganisationCode(rowList.get(0).toString());//1
 						
 						if(rowList.get(1)!=null && !rowList.get(1).toString().trim().isEmpty())
@@ -254,7 +242,6 @@ public class UploadSupply extends HttpServlet {
 						
 						if(rowList.get(24)!=null && !rowList.get(24).toString().trim().isEmpty())
 						supplySetup.setpOLineNumber((int)(Double.parseDouble(rowList.get(24).toString())));//24
-						
 						if(rowList.get(25)!=null && !rowList.get(25).toString().trim().isEmpty())
 						supplySetup.setPartNumber(rowList.get(25).toString());//25
 						
@@ -314,157 +301,93 @@ public class UploadSupply extends HttpServlet {
 							
 						if(rowList.get(38)!=null && !rowList.get(38).toString().trim().isEmpty()){							
 						supplySetup.setUOMForLeadtime(rowList.get(38).toString());	//38						
-						}
+						}						
 						supplySetup.setPlantID(key);											
 						supplySetup.setHeadParentId("NA");//40		
 						supplySetup.setParentID("NA");//41								
-						supplySetup.setMode(rowList.get(38).toString());//42	
+						supplySetup.setMode("REFRESH");//42	
 						DateFormat bqSdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 						Calendar c = Calendar.getInstance();
 						c.setTime(new Date());
 						String insertDate = bqSdf.format(c.getTime());
 						supplySetup.setInsertDate(insertDate);																			
-						supplySetup.setModifiedTime(insertDate); //44								
-						
-						if(plantCode.equalsIgnoreCase("SUNN"))
-						{
-							firstPlantSet.add(supplySetup);			
-							
-						}else if(plantCode.equalsIgnoreCase("ARSG"))
-						{
-							secondPlantSet.add(supplySetup);
-						}else if(plantCode.equalsIgnoreCase("AREU"))
-						{
-							thirdPlantSet.add(supplySetup);
-						}else
-						{
-							System.out.println("SOME OTHER PLANT CODE : "+plantCode);
-						}					
+						supplySetup.setModifiedTime(insertDate); //44	
 						supplyData.add(supplySetup);					
-						rowNo++;
-						System.out.println("inside while loop");
+						rowNo++;						
 						
-		}else{
-			j++;
 		}
+		}catch(Exception e){
+			System.out.println(""+e.getMessage());
 		}
 		String headers="OrganisationCode, OrganisationName, CompanyCode, CompanyName, PlantCode, PlantName, SupplyType, SalesOrderNumber, SOAmendmentNumber, SalesOrderDate, StatusofSaleOrder, SOLineNumber, PurchaseOrderNumber, POAmendmentNumber, PurchaseOrderDate, StatusofPurchaseOrder, TradingPartnerCode, TradingPartnerName, TypeofTradingPartner, ShifFromAddressLine1, ShipFromAddressLine2, ShipFromCountryCode, ShipFromCityCode, TPZipcode, POLineNumber, PartNumber, PartName, PartRevisionNumber, Quantity, UOMCode, Price, CurrencyCode, POScheduleDate, SupplyDate, BusinessUnitCode, ModeOfShipment, ShipDate, LeadTime, UOMForLeadtime, PlantID, HeadParentId, ParentId, InsertDate, Mode, ModifiedTime,InsertionCount\n";
-		StringBuilder strbuilder= new StringBuilder();
-		
-		
-		List<PlantsDataVo> plantsDataList = new ArrayList<PlantsDataVo>();
-		
+		StringBuilder strbuilder= new StringBuilder();		
 		try{
-	         for(int i=0;i<3;i++)
-	        {	        	 
+			insertionCount = datastore.ProductInfoUtil.getSupplyUploadCountFromDataStore(plantDataSetInstance);
+			for(int i=0;i<table.size();i++)
+	        {			
 		    List<Supply> currentplant= new ArrayList<>();
-		    if(i==0){		
-			
-			currentplant=firstPlantSet;			
-			Supply currentPlantDS = currentplant.get(0);	
-			PlantsDataVo plantBean = new PlantsDataVo();
-			plantBean.setPlantCode(currentPlantDS.getPlantCode());			
-			plantBean.setOrgCode(currentPlantDS.getOrganisationCode());
-			plantBean.setComCode(currentPlantDS.getCompanyCode());
-			plantBean.setIndexNumber(0);
-			plantBean.setType("Supply");
-			plantDataSetInstance = "E2ESCM_"+plantBean.getOrgCode()+"_"+plantBean.getComCode()+"_"+plantBean.getPlantCode();
-			plantsDataList.add(plantBean);
-			}else if(i==1)
+		    currentplant=supplyData;		   		  
+		    for (Iterator iterator = currentplant.iterator(); iterator.hasNext();) 
 		    {
-			currentplant=secondPlantSet;
-			Supply currentPlantDS = currentplant.get(0);	
-			PlantsDataVo plantBean = new PlantsDataVo();
-			plantBean.setPlantCode(currentPlantDS.getPlantCode());			
-			plantBean.setOrgCode(currentPlantDS.getOrganisationCode());
-			plantBean.setComCode(currentPlantDS.getCompanyCode());
-			plantBean.setIndexNumber(1);
-			plantBean.setType("Supply");
-			plantDataSetInstance = "E2ESCM_"+plantBean.getOrgCode()+"_"+plantBean.getComCode()+"_"+plantBean.getPlantCode();
-			plantsDataList.add(plantBean);
-		    }
-		    else
-		    {
-			currentplant=thirdPlantSet;
-			Supply currentPlantDS = currentplant.get(0);
-			PlantsDataVo plantBean = new PlantsDataVo();
-			plantBean.setPlantCode(currentPlantDS.getPlantCode());			
-			plantBean.setOrgCode(currentPlantDS.getOrganisationCode());
-			plantBean.setComCode(currentPlantDS.getCompanyCode());
-			plantBean.setIndexNumber(2);
-			plantBean.setType("Supply");
-			plantDataSetInstance = "E2ESCM_"+plantBean.getOrgCode()+"_"+plantBean.getComCode()+"_"+plantBean.getPlantCode();
-			plantsDataList.add(plantBean);
-		    }		  
-		   for (Iterator iterator = currentplant.iterator(); iterator.hasNext();) 
-		   {
 			Supply supplySetUp = (Supply) iterator.next();			
-			strbuilder.append(supplySetUp.getOrganisationCode()+",");//1			
-			strbuilder.append(supplySetUp.getOrganisationName()+",");//2		
-			strbuilder.append(supplySetUp.getCompanyCode()+",");//3			
-			strbuilder.append(supplySetUp.getCompanyName()+",");//4		
-			strbuilder.append(supplySetUp.getPlantCode()+",");//5		
-			strbuilder.append(supplySetUp.getPlantName()+",");//6		
-			strbuilder.append(supplySetUp.getSupplyType()+",");//7			
-			strbuilder.append(supplySetUp.getSalesOrderNumber()+",");//8			
-			strbuilder.append(((Integer)supplySetUp.getSOAmendmentNumber())+",");//9			
-			strbuilder.append(supplySetUp.getSalesOrderDate()+",");//10			
-			strbuilder.append(supplySetUp.getStatusofSaleOrder()+",");//11			
-			strbuilder.append((Integer)supplySetUp.getSOLineNumber()+",");//12			
-			strbuilder.append(supplySetUp.getPurchaseOrderNumber()+",");//13			
-			strbuilder.append(((Integer)supplySetUp.getPOAmendmentNumber())+",");//14			
-			strbuilder.append(supplySetUp.getPurchaseOrderDate()+",");//15			
-			strbuilder.append(supplySetUp.getStatusofPurchaseOrder()+",");//16			
-			strbuilder.append(supplySetUp.getTradingPartnerCode()+",");//17			
-			strbuilder.append(supplySetUp.getTradingPartnerName()+",");//18			
-			strbuilder.append(supplySetUp.getTypeofTradingPartner()+",");//19	
+			strbuilder.append(supplySetUp.getOrganisationCode()+",");//1	OrganisationCode		
+			strbuilder.append(supplySetUp.getOrganisationName()+",");//2	OrganisationName	
+			strbuilder.append(supplySetUp.getCompanyCode()+",");//3		CompanyCode	
+			strbuilder.append(supplySetUp.getCompanyName()+",");//4		CompanyName
+			strbuilder.append(supplySetUp.getPlantCode()+",");//5	PlantCode	
+			strbuilder.append(supplySetUp.getPlantName()+",");//6	PlantName	
+			strbuilder.append(supplySetUp.getSupplyType()+",");//7	SupplyType		
+			strbuilder.append(supplySetUp.getSalesOrderNumber()+",");//8	SalesOrderNumber		
+			strbuilder.append(((Integer)supplySetUp.getSOAmendmentNumber())+",");//9SOAmendmentNumber			
+			strbuilder.append(supplySetUp.getSalesOrderDate()+",");//10		SalesOrderDate	
+			strbuilder.append(supplySetUp.getStatusofSaleOrder()+",");//11	StatusofSaleOrder		
+			strbuilder.append((Integer)supplySetUp.getSOLineNumber()+",");//12	SOLineNumber		
+			strbuilder.append(supplySetUp.getPurchaseOrderNumber()+",");//13PurchaseOrderNumber			
+			strbuilder.append(((Integer)supplySetUp.getPOAmendmentNumber())+",");//14	POAmendmentNumber		
+			strbuilder.append(supplySetUp.getPurchaseOrderDate()+",");//15	PurchaseOrderDate		
+			strbuilder.append(supplySetUp.getStatusofPurchaseOrder()+",");//16	StatusofPurchaseOrder		
+			strbuilder.append(supplySetUp.getTradingPartnerCode()+",");//17		TradingPartnerCode	
+			strbuilder.append(supplySetUp.getTradingPartnerName()+",");//18	TradingPartnerName		
+			strbuilder.append(supplySetUp.getTypeofTradingPartner()+",");//19	TypeofTradingPartner
 			if(supplySetUp.getShipfromAddressLine1()!=null && !supplySetUp.getShipfromAddressLine1().isEmpty())
 			strbuilder.append(supplySetUp.getShipfromAddressLine1().replace(",", " ") +",");	
 			else
-			strbuilder.append(supplySetUp.getShipfromAddressLine1()+",");	
+			strbuilder.append(supplySetUp.getShipfromAddressLine1()+",");	//ShifFromAddressLine1
 			if(supplySetUp.getShipfromAddressLine2()!=null && !supplySetUp.getShipfromAddressLine2().isEmpty())
 			strbuilder.append(supplySetUp.getShipfromAddressLine2().replace(",", " ") +",");		
 			else				
-			strbuilder.append(supplySetUp.getShipfromAddressLine2()+",");
-			strbuilder.append(supplySetUp.getShipfromCountryCode()+",");//22			
-			strbuilder.append(supplySetUp.getShipfromCityCode()+",");//23			
-			strbuilder.append(supplySetUp.getTPZipcode()+",");		//24			
-			strbuilder.append((Integer)supplySetUp.getpOLineNumber()+",");//25			
-			strbuilder.append(supplySetUp.getPartNumber()+",");//26			
-			strbuilder.append(supplySetUp.getPartName()+",");//27			
-			strbuilder.append(((Integer)supplySetUp.getPartRevisionNumber())+",");	//28					
-			strbuilder.append(((Double)supplySetUp.getQuantity()).intValue()+",");//29				
-			strbuilder.append(supplySetUp.getUOMCode()+",");//30			
-			strbuilder.append(((Integer)supplySetUp.getPrice())+",");//31			
-			strbuilder.append(supplySetUp.getCurrencyCode()+",");//32			
-			strbuilder.append(supplySetUp.getPOScheduleDate()+",");//33	
-			strbuilder.append(supplySetUp.getSupplyDate()+",");	//34				
-			strbuilder.append(supplySetUp.getBusinessUnitCode()+",");//35				
-			strbuilder.append(supplySetUp.getModeOfShipment()+",");//36			
-			strbuilder.append(supplySetUp.getShipDate()+",");//37			
-			strbuilder.append((Integer)supplySetUp.getLeadTime()+",");//38			
-			strbuilder.append(supplySetUp.getUOMForLeadtime()+",");	//39				
-			strbuilder.append(supplySetUp.getPlantID()+",");//40			
-			strbuilder.append(supplySetUp.getHeadParentId()+",");//41			
-			strbuilder.append(supplySetUp.getParentID()+",");//42			
-			strbuilder.append(supplySetUp.getInsertDate()+",");//43			
+			strbuilder.append(supplySetUp.getShipfromAddressLine2()+",");//ShipFromAddressLine2
+			strbuilder.append(supplySetUp.getShipfromCountryCode()+",");//22ShipFromCountryCode			
+			strbuilder.append(supplySetUp.getShipfromCityCode()+",");//23	ShipFromCityCode		
+			strbuilder.append(supplySetUp.getTPZipcode()+",");		//24		TPZipcode	
+			strbuilder.append((Integer)supplySetUp.getpOLineNumber()+",");//25	POLineNumber		
+			strbuilder.append(supplySetUp.getPartNumber()+",");//26		PartNumber	
+			strbuilder.append(supplySetUp.getPartName()+",");//27	PartName		
+			strbuilder.append(((Integer)supplySetUp.getPartRevisionNumber())+",");	//28	PartRevisionNumber				
+			strbuilder.append(((Double)supplySetUp.getQuantity()).intValue()+",");//29		Quantity		
+			strbuilder.append(supplySetUp.getUOMCode()+",");//30		UOMCode	
+			strbuilder.append(((Integer)supplySetUp.getPrice())+",");//31	PRICW		
+			strbuilder.append(supplySetUp.getCurrencyCode()+",");//32	CurrencyCode		
+			strbuilder.append(supplySetUp.getPOScheduleDate()+",");//33	PODATE
+			strbuilder.append(supplySetUp.getSupplyDate()+",");	//34	SUPPLKYDATE			
+			strbuilder.append(supplySetUp.getBusinessUnitCode()+",");//35BusinessUnitCode				
+			strbuilder.append(supplySetUp.getModeOfShipment()+",");//36	ModeOfShipment		
+			strbuilder.append(supplySetUp.getShipDate()+",");//37		ShipDate	
+			strbuilder.append((Integer)supplySetUp.getLeadTime()+",");//38	LEAD		
+			strbuilder.append(supplySetUp.getUOMForLeadtime()+",");	//39UOMForLeadtime				
+			strbuilder.append(supplySetUp.getPlantID()+",");//40	PlantID		
+			strbuilder.append(supplySetUp.getHeadParentId()+",");//41	HP		
+			strbuilder.append(supplySetUp.getParentID()+",");//42	PARE		
+			strbuilder.append(supplySetUp.getInsertDate()+",");//43		InsertDate	
 			strbuilder.append(supplySetUp.getMode()+",");//44			
-			strbuilder.append(supplySetUp.getModifiedTime()+","); //45			
-			insertionCount = datastore.ProductInfoUtil.getSupplyUploadCountFromDataStore(plantDataSetInstance);
-			System.out.println("insertionCount------->"+insertionCount);
+			strbuilder.append(supplySetUp.getModifiedTime()+","); //45				
 			strbuilder.append((insertionCount+1)+" \n");				
 			
-		}
-		try {		
-				datastore.ProductInfoUtil.putSupplyUploadCountIntoDataStore(insertionCount,plantDataSetInstance);
-		} catch (IOException e) {
-		// TODO Auto-generated catch block
-			e.printStackTrace();
-		}		
-		byte[] channel= (headers+ strbuilder.toString()).getBytes();
-		
+		}	
+		if(strbuilder.toString()!=null && !strbuilder.toString().isEmpty()){	
+		byte[] channel= (headers+ strbuilder.toString()).getBytes();		
 		ByteBuffer buf = ByteBuffer.wrap(channel);
-		GcsFilename file= new GcsFilename("e2escm-gpractice.appspot.com", "Bulk/supply"+((Integer)i).toString()+".csv");		
+		GcsFilename file= new GcsFilename("e2escm-gpractice.appspot.com", "Bulk/Supply_"+(String)plantDataSetInstance.toString()+".csv");		
 		
 		GcsFileOptions.Builder builder= new GcsFileOptions.Builder();
 		GcsFileOptions fileoptions=builder.mimeType("application/vnd.ms-excel").build();
@@ -472,36 +395,29 @@ public class UploadSupply extends HttpServlet {
 		try {
 			outputChannel = gcsService.createOrReplace(file, fileoptions);
 			outputChannel.write(buf);
-			outputChannel.close();		
-			System.out.println("Start the upload JOBBBBB");			
-			System.out.println("Done");
+			outputChannel.close();			
 		} catch (Exception e1) 
 		{
 			// TODO Auto-generated catch block			
 			System.out.println(e1.getMessage());
 			e1.printStackTrace();
 		}
-		
+		}
+		else{
+			System.out.println("No data found");
+		}
 	currentplant.clear();
 	strbuilder.setLength(0);
-	
 	}
-		}
+	}
 	catch(Exception e){
 		System.out.println("Exception-------------"+e.getMessage());
-	}
-
-	Iterator<PlantsDataVo> plantlistIt = plantsDataList.iterator();
-	int i = 0;	
+	}	
 	List<Map<String,List<String>>> jobids= new ArrayList<>();
 	try{
-	//while(plantlistIt.hasNext())
-	//	{		
-		    Map<String,List<String>> temp= new HashMap<>();
-			temp=new bqloadjob().bqservice("supply"+((Integer)i).toString()+".csv",plantDataSetInstance);
-			i++;
-			jobids.add(temp);
-		//}	
+	    Map<String,List<String>> temp= new HashMap<>();
+		temp=new bqloadjob().bqservice("Supply_"+((String)plantDataSetInstance).toString()+".csv",plantDataSetInstance,"Supply");
+		jobids.add(temp);		
 	try {		
 		datastore.ProductInfoUtil.putAllSupplyRequiredDatesIntoDataStore(supplyRequiredDates);		
 	} catch (IOException e) {
