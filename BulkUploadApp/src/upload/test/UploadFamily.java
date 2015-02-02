@@ -346,13 +346,13 @@ public class UploadFamily extends HttpServlet {
 	
 	List<Map<String,List<String>>> jobids= new ArrayList<>();
 	try{
-	while(plantlistIt.hasNext())
-		{		
+	//while(plantlistIt.hasNext())
+	//	{		
 		    Map<String,List<String>> temp= new HashMap<>();
-			temp=new bqloadjob().bqservice("productfamily"+((Integer)i).toString()+".csv",plantlistIt.next());
+			temp=new bqloadjob().bqservice("productfamily"+((Integer)i).toString()+".csv",plantDataSetInstance);
 			i++;
 			jobids.add(temp);
-		}	
+	//	}	
 	try {			
 		datastore.ProductInfoUtil.putAllProductRequiredDatesIntoDataStore(productRequiredDates);		
 	} catch (Exception e) {
