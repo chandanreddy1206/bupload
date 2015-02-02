@@ -107,7 +107,7 @@ public class UploadFamily extends HttpServlet {
 	private String plantDataSetInstance = null;
 	
 	
-	public List<Map<String, List<String>>> createProductData(List<List<Object>> table) 
+	public List<Map<String, List<String>>> createProductData(List<List<Object>> table,String plantDataSetInstance)  
 	{
 		final String DATEFORMAT2 = "yyyy-MM-dd HH:mm:ss";
 		String dDate = null;			
@@ -115,19 +115,14 @@ public class UploadFamily extends HttpServlet {
 		String plantName=null;
 		final DateFormat to = new SimpleDateFormat(DATEFORMAT2);
 		final Iterator<List<Object>> tblItr = table.iterator();
-		final List<Product> productSetup = new ArrayList<Product>();		
-		List<Product> firstPlantSet = new ArrayList<Product>();
-		List<Product> secondPlantSet = new ArrayList<Product>();
-		List<Product> thirdPlantSet = new ArrayList<Product>();
+		final List<Product> productSetup = new ArrayList<Product>();	
 		int rowNo = 1;
 		int j=0;String plantCode = null;		
 		productRequiredDates = new HashMap<String, String>();
 		while (tblItr.hasNext()) {
 			List<Object> rowList = (ArrayList<Object>) tblItr.next();
 		  	Product product = new Product();
-		  	String productFamily=null;String parentID=null;
-		  	
-		if(j>0){			
+		  	String productFamily=null;String parentID=null;	
 			    productFamily = rowList.get(23).toString();//Family			
 			    parentID = rowList.get(6).toString();							
 				if(rowList.get(0) != null && !rowList.get(0).toString().trim().isEmpty()){
@@ -198,75 +193,18 @@ public class UploadFamily extends HttpServlet {
 				String insertDate = bqSdf.format(c.getTime());
 				product.setModifiedTime(insertDate);				
 				product.setLevel(0);
-				product.setParentID(productFamily);							
-				if(plantCode.equalsIgnoreCase("SUNN"))
-				{
-					firstPlantSet.add(product);							
-				}else if(plantCode.equalsIgnoreCase("ARSG"))
-				{
-					secondPlantSet.add(product);
-				}else if(plantCode.equalsIgnoreCase("AREU"))
-				{
-					thirdPlantSet.add(product);
-				}else
-				{
-					System.out.println("SOME OTHER PLANT CODE : "+plantCode);
-				}				
+				product.setParentID(productFamily);									
                 productSetup.add(product);			
 			    rowNo++;
-		    }else{		    	
-			    j++;
-		    }
 		}
 		String headers="OrganisationCode, OrganisationName, CompanyCode, CompanyName, PlantCode, PlantName, Level, ProductCode, ProductName, ProductRevisionNumber, PartNumber, PartName, PartRevisionNumber, StatusoftheBOM, Comments, UOMCode, PartUsageQuantity, SupplyType, ReferenceDesignators, ProductImage, Price, CurrencyCode, LeadTime, UOMLeadTime, Family, Model, ProductFamily3, Supplier, ParentID, ModifiedTime,InsertionCount\n";
 		StringBuilder strbuilder= new StringBuilder();
-		
-		
-		List<PlantsDataVo> plantsDataList = new ArrayList<PlantsDataVo>();
-		
 		try{
-	         for(int i=0;i<3;i++)
-	        {
-	        	
-		         List<Product> currentplant= new ArrayList<>();
-		    if(i==0){		
-			
-			currentplant=firstPlantSet;			
-			Product currentPlantDS = currentplant.get(0);	
-			PlantsDataVo plantBean = new PlantsDataVo();
-			plantBean.setPlantCode(currentPlantDS.getPlantCode());			
-			plantBean.setOrgCode(currentPlantDS.getOrganisationCode());
-			plantBean.setComCode(currentPlantDS.getCompanyCode());
-			plantBean.setIndexNumber(0);
-			plantBean.setType("BOM");
-			plantDataSetInstance = "E2ESCM_"+plantBean.getOrgCode()+"_"+plantBean.getComCode()+"_"+plantBean.getPlantCode();
-			plantsDataList.add(plantBean);
-			}else if(i==1)
-		    {
-			currentplant=secondPlantSet;
-			Product currentPlantDS = currentplant.get(0);	
-			PlantsDataVo plantBean = new PlantsDataVo();
-			plantBean.setPlantCode(currentPlantDS.getPlantCode());			
-			plantBean.setOrgCode(currentPlantDS.getOrganisationCode());
-			plantBean.setComCode(currentPlantDS.getCompanyCode());
-			plantBean.setIndexNumber(1);
-			plantBean.setType("BOM");
-			plantDataSetInstance = "E2ESCM_"+plantBean.getOrgCode()+"_"+plantBean.getComCode()+"_"+plantBean.getPlantCode();
-			plantsDataList.add(plantBean);
-		    }
-		    else
-		    {
-			currentplant=thirdPlantSet;
-			Product currentPlantDS = currentplant.get(0);	
-			PlantsDataVo plantBean = new PlantsDataVo();
-			plantBean.setPlantCode(currentPlantDS.getPlantCode());			
-			plantBean.setOrgCode(currentPlantDS.getOrganisationCode());
-			plantBean.setComCode(currentPlantDS.getCompanyCode());
-			plantBean.setIndexNumber(2);
-			plantBean.setType("BOM");
-			plantDataSetInstance = "E2ESCM_"+plantBean.getOrgCode()+"_"+plantBean.getComCode()+"_"+plantBean.getPlantCode();
-			plantsDataList.add(plantBean);
-		    }		    
+		   insertionCount = datastore.ProductInfoUtil.getProductUploadCountFromDataStore(plantDataSetInstance);
+	       for(int i=0;i<table.size();i++)
+	       {	        	
+		   List<Product> currentplant= new ArrayList<>();		
+		   currentplant=productSetup;
 		   for (Iterator iterator = currentplant.iterator(); iterator.hasNext();) 
 		   {
 		    Product productSetUp = (Product) iterator.next();		   
@@ -302,37 +240,29 @@ public class UploadFamily extends HttpServlet {
 			strbuilder.append(productSetUp.getProductFamily3() +",");//27			
 			strbuilder.append(productSetUp.getSupplier()+",");	//28			
 			strbuilder.append(productSetUp.getParentID()+",");//29				
-			strbuilder.append(productSetUp.getModifiedTime()+","); //45
-			insertionCount = datastore.ProductInfoUtil.getProductUploadCountFromDataStore(plantDataSetInstance);
-			System.out.println("insertionCount------->"+insertionCount);
-			strbuilder.append((insertionCount+1)+" \n");			
-			
-		}
-		 try {		
-			datastore.ProductInfoUtil.putProductUploadCountIntoDataStore(insertionCount,plantDataSetInstance);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-				e.printStackTrace();
-		}
-		System.out.println("after the loop");
+			strbuilder.append(productSetUp.getModifiedTime()+","); //45					
+			strbuilder.append((insertionCount+1)+" \n");				
+		}	
+		if(strbuilder.toString()!=null && !strbuilder.toString().isEmpty()){	
 		byte[] channel= (headers+ strbuilder.toString()).getBytes();		
 		ByteBuffer buf = ByteBuffer.wrap(channel);	
-		GcsFilename file= new GcsFilename("e2escm-gpractice.appspot.com", "Bulk/productfamily"+((Integer)i).toString()+".csv");		
-		
+		GcsFilename file= new GcsFilename("e2escm-gpractice.appspot.com", "Bulk/Productfamily_"+((String)plantDataSetInstance).toString()+".csv");		
 		GcsFileOptions.Builder builder= new GcsFileOptions.Builder();
 		GcsFileOptions fileoptions=builder.mimeType("application/vnd.ms-excel").build();
 		GcsOutputChannel outputChannel;
 		try {
 			outputChannel = gcsService.createOrReplace(file, fileoptions);
 			outputChannel.write(buf);
-			outputChannel.close();		
-			System.out.println("Start the upload JOBBBBB");			
-		    System.out.println("Done");
+			outputChannel.close();				
 		} catch (Exception e1) 
 		{			
 			System.out.println("Exception-->"+e1.getMessage());
 			e1.printStackTrace();
-		}		
+		}
+		}
+		else{
+			System.out.println("No data found");
+		}
 	currentplant.clear();
 	strbuilder.setLength(0);	
 	}
@@ -340,19 +270,11 @@ public class UploadFamily extends HttpServlet {
 	catch(Exception e){
 		System.out.println("Exception-------"+e.getMessage());
 	}
-
-	Iterator<PlantsDataVo> plantlistIt = plantsDataList.iterator();
-	int i = 0;
-	
 	List<Map<String,List<String>>> jobids= new ArrayList<>();
 	try{
-	//while(plantlistIt.hasNext())
-	//	{		
-		    Map<String,List<String>> temp= new HashMap<>();
-			temp=new bqloadjob().bqservice("productfamily"+((Integer)i).toString()+".csv",plantDataSetInstance);
-			i++;
-			jobids.add(temp);
-	//	}	
+	    Map<String,List<String>> temp= new HashMap<>();
+		temp=new bqloadjob().bqservice("Productfamily_"+((String)plantDataSetInstance).toString()+".csv",plantDataSetInstance,"BOM");
+		jobids.add(temp);	
 	try {			
 		datastore.ProductInfoUtil.putAllProductRequiredDatesIntoDataStore(productRequiredDates);		
 	} catch (Exception e) {
