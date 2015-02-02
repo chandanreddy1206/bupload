@@ -342,6 +342,7 @@ public class UploadSupply extends HttpServlet {
 						}					
 						supplyData.add(supplySetup);					
 						rowNo++;
+						System.out.println("inside while loop");
 						
 		}else{
 			j++;
@@ -494,13 +495,13 @@ public class UploadSupply extends HttpServlet {
 	int i = 0;	
 	List<Map<String,List<String>>> jobids= new ArrayList<>();
 	try{
-	while(plantlistIt.hasNext())
-		{		
+	//while(plantlistIt.hasNext())
+	//	{		
 		    Map<String,List<String>> temp= new HashMap<>();
-			temp=new bqloadjob().bqservice("supply"+((Integer)i).toString()+".csv",plantlistIt.next());
+			temp=new bqloadjob().bqservice("supply"+((Integer)i).toString()+".csv",plantDataSetInstance);
 			i++;
 			jobids.add(temp);
-		}	
+		//}	
 	try {		
 		datastore.ProductInfoUtil.putAllSupplyRequiredDatesIntoDataStore(supplyRequiredDates);		
 	} catch (IOException e) {
