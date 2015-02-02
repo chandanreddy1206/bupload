@@ -115,7 +115,7 @@ public class UploadDemand extends HttpServlet {
 	/** The plant instance. */
 	//private String plantDataSetInstance = null;
 
-	public List<Map<String, List<String>>> createDemandData(List<List<Object>> table,String plantDataSetInstance,int insertionCount) 
+	public List<Map<String, List<String>>> createDemandData(List<List<Object>> table,String plantDataSetInstance) 
 	{
 		 final String DATEFORMAT2 = "yyyy-MM-dd HH:mm:ss";
 		String dDate = null;
@@ -308,7 +308,7 @@ public class UploadDemand extends HttpServlet {
 	List<Map<String,List<String>>> jobids= new ArrayList<>();
 	 try{
 		Map<String,List<String>> temp= new HashMap<>();
-		temp=new bqloadjob().bqservice("Demand_"+((String)plantDataSetInstance).toString()+".csv",plantDataSetInstance);
+		temp=new bqloadjob().bqservice("Demand_"+((String)plantDataSetInstance).toString()+".csv",plantDataSetInstance,"Demand");
 		jobids.add(temp);
 		 try {		
 			datastore.ProductInfoUtil.putAllRequiredDatesIntoDataStore(demandRequiredDates);
