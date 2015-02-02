@@ -62,7 +62,7 @@ public class bqloadjob
   String JobId;
   Job get_details;
   Bigquery bq;  
-public Map<String,List<String>> bqservice(String filename,PlantsDataVo plantsBean) 
+public Map<String,List<String>> bqservice(String filename,String plantDataSetInstance) 
 { 
 	get_details =new Job(); 	
 try {	
@@ -86,16 +86,16 @@ try {
 	   loader.setSourceUris(uris);	   
 	   TableReference destinationTable = new TableReference();
 	   destinationTable.setProjectId("e2escm-gpractice");	   
-	   String dataSetName = "E2ESCM_"+plantsBean.getOrgCode()+"_"+plantsBean.getComCode()+"_"+plantsBean.getPlantCode();
+	   String dataSetName = plantDataSetInstance;
 	   destinationTable.setDatasetId(dataSetName);	
 	   System.out.println("getDatasetId::::::::::::::::::::::::::"+ destinationTable.getDatasetId());	
-	   if("Demand".equals(plantsBean.getType())){		   
+	  // if("Demand".equals(plantsBean.getType())){		   
 	   destinationTable.setTableId("DEMAND");	
-	   }else if("Supply".equals(plantsBean.getType())){
-	   destinationTable.setTableId("SUPPLYBUY");	
-	   }else{	
-	   destinationTable.setTableId("BOM");   
-	   }	   
+	  // }else if("Supply".equals(plantsBean.getType())){
+	  // destinationTable.setTableId("SUPPLYBUY");	
+	  // }else{	
+	  // destinationTable.setTableId("BOM");   
+	 //  }	   
 	 
 	   loader.setDestinationTable(destinationTable);	   
 	   loader.setWriteDisposition("WRITE_APPEND");
