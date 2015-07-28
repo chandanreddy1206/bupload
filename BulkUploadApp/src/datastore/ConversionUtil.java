@@ -10,7 +10,7 @@ import java.io.ObjectOutputStream;
 /**
  * The Class ConversionUtil provides methods for type conversion.
  * 
- * @author BabajyotiPrakashSingh
+ * @author BabajyotiPrakashSingh TechMahindra.com
  * @version 0.1
  */
 public class ConversionUtil {
